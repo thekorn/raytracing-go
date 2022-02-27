@@ -77,6 +77,13 @@ func (v Vec3) Reflect(o Vec3) Vec3 {
 	return v.Sub(o.ScalarProd(2 * v.Dot(o)))
 }
 
+func (v Vec3) Refract(normal Vec3, etaiOverEtat float64) Vec3 {
+	cos_theta := v.ScalarProd(-1).Dot(normal)
+	r_out_parallel := v.Add(normal.ScalarProd(cos_theta)).ScalarProd(etaiOverEtat)
+	rOut_Prep := normal.ScalarProd(-1 * math.Sqrt(1-r_out_parallel.Length_squared()))
+	return r_out_parallel.Add(rOut_Prep)
+}
+
 func (v Vec3) RandomInHemisphere() Vec3 {
 	in_unit_sphere := MakeRandomUnitVec3()
 	if in_unit_sphere.Dot(v) > 0.0 {
