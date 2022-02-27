@@ -18,14 +18,14 @@ func MakeSphere(center vec3.Point3, radius float64) Sphere {
 func (s Sphere) Hit(r Ray) float64 {
 	oc := r.Origin.Sub(s.Center.Vec3)
 
-	a := r.Direction.Dot(r.Direction)
-	b := 2 * oc.Dot(r.Direction)
-	c := oc.Dot(oc) - s.Radius*s.Radius
+	a := r.Direction.Length_squared()
+	half_b := oc.Dot(r.Direction)
+	c := oc.Length_squared() - s.Radius*s.Radius
 
-	discriminant := b*b - 4*a*c
+	discriminant := half_b*half_b - a*c
 	if discriminant < 0 {
 		return -1
 	} else {
-		return (-1*b - math.Sqrt(discriminant)) / (2 * a)
+		return (-1*half_b - math.Sqrt(discriminant)) / a
 	}
 }
