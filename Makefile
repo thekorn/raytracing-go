@@ -10,7 +10,7 @@ build:
 	go build -o ${BINARY_NAME} main.go
  
 test:
-	go test -v main.go
+	go test -v ./...
  
 run: build outdir
 	./${BINARY_NAME}
