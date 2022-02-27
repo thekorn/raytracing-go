@@ -4,7 +4,10 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"math"
 	"strings"
+
+	"github.com/thekorn/raytracing-go/internal/vec3"
 )
 
 type PPMImageFile struct {
@@ -34,6 +37,15 @@ func (i PPMImageFile) Close() {
 	if err != nil {
 		log.Fatal(err)
 	}
+}
+
+func (i PPMImageFile) WriteColor(c vec3.Color) {
+	normColor := c.ScalarProd(255)
+	i.WritePixel(
+		int(math.Floor(normColor.X)),
+		int(math.Floor(normColor.Y)),
+		int(math.Floor(normColor.Z)),
+	)
 }
 
 func MakePPMImageFile(filepath string, width int, height int) PPMImageFile {

@@ -5,30 +5,36 @@ import (
 	"testing"
 )
 
+func shouldPanic(t *testing.T, f func()) {
+	defer func() { recover() }()
+	f()
+	t.Errorf("should have panicked")
+}
+
 func TestCreateNullVector(t *testing.T) {
 	v := MakeVec3(0, 0, 0)
-	if v.x != 0 || v.y != 0 || v.z != 0 {
+	if v.X != 0 || v.Y != 0 || v.Z != 0 {
 		t.Errorf("failed creating a NullVector")
 	}
 }
 
 func TestCreateNewVector(t *testing.T) {
 	v := MakeVec3(1, 2, 3)
-	if v.x != 1 || v.y != 2 || v.z != 3 {
+	if v.X != 1 || v.Y != 2 || v.Z != 3 {
 		t.Errorf("failed creating a Vector, got %v", v)
 	}
 }
 
 func TestCreateNewColor(t *testing.T) {
-	v := Color{1, 2, 3}
-	if v.x != 1 || v.y != 2 || v.z != 3 {
+	v := MakeColor(0, 0.4, 0.6)
+	if v.X != 0 || v.Y != 0.4 || v.Z != 0.6 {
 		t.Errorf("failed creating a Color, got %s", v)
 	}
 }
 
 func TestCreateNewPoint3(t *testing.T) {
-	v := Point3{1, 2, 3}
-	if v.x != 1 || v.y != 2 || v.z != 3 {
+	v := MakePoint3(1, 2, 3)
+	if v.X != 1 || v.Y != 2 || v.Z != 3 {
 		t.Errorf("failed creating a Point3, got %v", v)
 	}
 }
@@ -37,7 +43,7 @@ func TestCalculateScalarProduct(t *testing.T) {
 	v := MakeVec3(1, 2, 3)
 
 	s := v.ScalarProd(6)
-	if s.x != 6 || s.y != 12 || s.z != 18 {
+	if s.X != 6 || s.Y != 12 || s.Z != 18 {
 		t.Errorf("failed calculating scalar product of a Vector, got %v", s)
 	}
 }
@@ -56,7 +62,7 @@ func TestCalculateNegativeScalarProduct(t *testing.T) {
 	v := MakeVec3(1, 2, 3)
 
 	s := v.ScalarProd(-6)
-	if s.x != -6 || s.y != -12 || s.z != -18 {
+	if s.X != -6 || s.Y != -12 || s.Z != -18 {
 		t.Errorf("failed calculating scalar product of a Vector, got %v", s)
 	}
 }
@@ -66,7 +72,7 @@ func TestAddTwoVectors(t *testing.T) {
 	b := MakeVec3(4, 5, 6)
 
 	v := a.Add(b)
-	if v.x != 5 || v.y != 7 || v.z != 9 {
+	if v.X != 5 || v.Y != 7 || v.Z != 9 {
 		t.Errorf("failed adding two vectors, got %v", v)
 	}
 }
@@ -76,7 +82,7 @@ func TestSubstractTwoVectors(t *testing.T) {
 	b := MakeVec3(4, 8, 12)
 
 	v := a.Sub(b)
-	if v.x != -3 || v.y != -6 || v.z != -9 {
+	if v.X != -3 || v.Y != -6 || v.Z != -9 {
 		t.Errorf("failed substracting two vectors, got %s", v)
 	}
 }
@@ -123,4 +129,18 @@ func TestGetCrossProductTwoVectors(t *testing.T) {
 	if !v.Equals(Vec3{}) {
 		t.Errorf("failed getting cross product of two vectors, got %v", v)
 	}
+}
+
+func TestCreateBlackColor(t *testing.T) {
+	black := Color{}
+	if black.X != 0 || black.Y != 0 || black.Z != 0 {
+		t.Errorf("failed creating black")
+	}
+}
+
+func TestCreateInvalidColor(t *testing.T) {
+	createInvalidColor := func() {
+		MakeColor(10, 3, 5)
+	}
+	shouldPanic(t, createInvalidColor)
 }
