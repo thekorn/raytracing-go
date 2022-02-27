@@ -16,7 +16,7 @@ cover: test
 	go tool cover -html=cover.out
  
 run: build outdir
-	time ./${BINARY_NAME}
+	./${BINARY_NAME}
 
 open: run
 	open ${OUT_DIR}/go.ppm
