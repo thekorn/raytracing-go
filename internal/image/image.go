@@ -24,7 +24,7 @@ func (i PPMImageFile) writeLine(data string) {
 
 func (i PPMImageFile) writeHeader(width int, height int) {
 	i.writeLine("P3")
-	i.writeLine(fmt.Sprintf("%d %d", height, width))
+	i.writeLine(fmt.Sprintf("%d %d", width, height))
 	i.writeLine("255") // max color value
 }
 

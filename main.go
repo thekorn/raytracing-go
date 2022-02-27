@@ -2,19 +2,40 @@ package main
 
 import (
 	"github.com/thekorn/raytracing-go/internal/image"
+	"github.com/thekorn/raytracing-go/internal/ray"
 	"github.com/thekorn/raytracing-go/internal/vec3"
 )
 
 func main() {
 
-	const image_height = 255
-	const image_width = 255
+	const aspect_ratio = float64(16) / 9
+	const image_width = 384
+	const image_height = int(image_width / aspect_ratio)
 
 	img := image.MakePPMImageFile("./tmp/go.ppm", image_width, image_height)
-	for y := image_height; y >= 0; y-- {
+
+	origin := vec3.MakePoint3(0, 0, 0)
+	horizontal := vec3.MakeVec3(4, 0, 0)
+	vertical := vec3.MakeVec3(0, 2.25, 0)
+	lower_left_corner := origin.
+		Sub(horizontal.Div(2)).
+		Sub(vertical.Div(2)).
+		Sub(vec3.MakeVec3(0, 0, 1))
+
+	for y := image_height - 1; y >= 0; y-- {
 		for x := 0; x < image_width; x++ {
-			c := vec3.MakeColor(float64(x)/image_width, float64(y)/image_height, 0.25)
-			img.WriteColor(c)
+			u := float64(x) / image_width
+			v := float64(y) / float64(image_height)
+
+			direction := lower_left_corner.Add(
+				horizontal.ScalarProd(u)).
+				Add(vertical.ScalarProd(v))
+
+			r := ray.MakeRay(origin, direction)
+			color := r.Color()
+
+			img.WriteColor(color)
+
 		}
 	}
 	img.Close()
