@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/schollz/progressbar/v3"
 	"github.com/thekorn/raytracing-go/internal/entities"
 	"github.com/thekorn/raytracing-go/internal/image"
 	"github.com/thekorn/raytracing-go/internal/vec3"
@@ -23,6 +24,8 @@ func main() {
 	world.Add(entities.MakeSphere(vec3.MakePoint3(0, -100.5, -1), 100))
 	world.Add(entities.MakeSphere(vec3.MakePoint3(0, 0, -1), 0.5))
 
+	bar := progressbar.Default(int64(image_width * image_height))
+
 	for y := image_height - 1; y >= 0; y-- {
 		for x := 0; x < image_width; x++ {
 			u := float64(x) / image_width
@@ -36,7 +39,7 @@ func main() {
 			color := r.Color(world)
 
 			img.WriteColor(color)
-
+			bar.Add(1)
 		}
 	}
 	img.Close()
