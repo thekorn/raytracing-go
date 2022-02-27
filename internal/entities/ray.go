@@ -25,15 +25,21 @@ func (r Ray) At(t float64) vec3.Vec3 {
 
 func (r Ray) Color(red_sphere Sphere) vec3.Color {
 
-	if red_sphere.Hit(r) {
-		return vec3.MakeColor(1, 0, 0)
+	t := red_sphere.Hit(r)
+	if t > 0 {
+		N := r.At(t).
+			Sub(vec3.MakeVec3(0, 0, -1)).
+			UnitVec().
+			Add(vec3.MakeVec3(1, 1, 1)).
+			ScalarProd(0.5)
+		return vec3.MakeColor(N.X, N.Y, N.Z)
 	}
 
 	unitDirection := r.Direction.UnitVec()
-	t := 0.5 * (unitDirection.Y + 1)
-	s := vec3.MakeColor(1, 1, 1).
+	t = 0.5 * (unitDirection.Y + 1)
+	s := vec3.MakeVec3(1, 1, 1).
 		ScalarProd(1 - t).
-		Add(vec3.MakeColor(0.5, 0.7, 1).ScalarProd(t))
+		Add(vec3.MakeVec3(0.5, 0.7, 1).ScalarProd(t))
 	return vec3.MakeColor(s.X, s.Y, s.Z)
 }
 
