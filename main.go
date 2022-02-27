@@ -1,8 +1,8 @@
 package main
 
 import (
+	"github.com/thekorn/raytracing-go/internal/entities"
 	"github.com/thekorn/raytracing-go/internal/image"
-	"github.com/thekorn/raytracing-go/internal/ray"
 	"github.com/thekorn/raytracing-go/internal/vec3"
 )
 
@@ -22,6 +22,8 @@ func main() {
 		Sub(vertical.Div(2)).
 		Sub(vec3.MakeVec3(0, 0, 1))
 
+	red_Sphere := entities.MakeSphere(vec3.MakePoint3(0, 0, -1), 0.5)
+
 	for y := image_height - 1; y >= 0; y-- {
 		for x := 0; x < image_width; x++ {
 			u := float64(x) / image_width
@@ -31,8 +33,8 @@ func main() {
 				horizontal.ScalarProd(u)).
 				Add(vertical.ScalarProd(v))
 
-			r := ray.MakeRay(origin, direction)
-			color := r.Color()
+			r := entities.MakeRay(origin, direction)
+			color := r.Color(red_Sphere)
 
 			img.WriteColor(color)
 
