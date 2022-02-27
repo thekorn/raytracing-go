@@ -24,18 +24,27 @@ func (r Ray) At(t float64) vec3.Vec3 {
 	return r.Origin.Add(r.Direction.ScalarProd(t))
 }
 
+func (r *Ray) Update(o Ray) {
+	r.Direction = o.Direction
+	r.Origin = o.Origin
+}
+
 func (r Ray) Color(world HittableList, depth int) vec3.Color {
-	rec := HitRecord{}
+	var rec *HitRecord = new(HitRecord)
 
 	if depth <= 0 {
 		return vec3.MakeColor(0, 0, 0)
 	}
 
-	if world.Hit(r, 0.001, math.Inf(1), &rec) {
-		target := rec.P.Add(rec.Normal.RandomInHemisphere())
-		r := MakeRay(rec.P, target.Sub(rec.P.Vec3))
-		c := r.Color(world, depth-1).ScalarProd(0.5)
-		return vec3.MakeColor(c.X, c.Y, c.Z)
+	if world.Hit(r, 0.001, math.Inf(1), rec) {
+		var scattered *Ray = new(Ray)
+		var attenuation *vec3.Color = new(vec3.Color)
+
+		if rec.Material.Scatter(r, rec, attenuation, scattered) {
+			c := attenuation.Mul(scattered.Color(world, depth-1).Vec3)
+			return vec3.MakeColor(c.X, c.Y, c.Z)
+		}
+		return vec3.MakeColor(0, 0, 0)
 	}
 	unitDirection := r.Direction.UnitVec()
 	t := 0.5 * (unitDirection.Y + 1)

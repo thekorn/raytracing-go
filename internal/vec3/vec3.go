@@ -41,6 +41,14 @@ func (v Vec3) Dot(o Vec3) float64 {
 	return v.X*o.X + v.Y*o.Y + v.Z*o.Z
 }
 
+func (v Vec3) Mul(o Vec3) Vec3 {
+	return MakeVec3(
+		v.X*o.X,
+		v.Y*o.Y,
+		v.Z*o.Z,
+	)
+}
+
 func (v Vec3) Cross(o Vec3) Vec3 {
 	return MakeVec3(
 		v.Y*o.Z-v.Z*o.Y,
@@ -65,6 +73,10 @@ func (v Vec3) Equals(o Vec3) bool {
 	return v.X == o.X && v.Y == o.Y && v.Z == o.Z
 }
 
+func (v Vec3) Reflect(o Vec3) Vec3 {
+	return v.Sub(o.ScalarProd(2 * v.Dot(o)))
+}
+
 func (v Vec3) RandomInHemisphere() Vec3 {
 	in_unit_sphere := MakeRandomUnitVec3()
 	if in_unit_sphere.Dot(v) > 0.0 {
@@ -72,6 +84,18 @@ func (v Vec3) RandomInHemisphere() Vec3 {
 	} else {
 		return in_unit_sphere.ScalarProd(-1)
 	}
+}
+
+func (v Vec3) Near_zero() bool {
+	// Return true if the vector is close to zero in all dimensions.
+	const s = 1e-8
+	return (math.Abs(v.X) < s) && (math.Abs(v.Y) < s) && (math.Abs(v.Z) < s)
+}
+
+func (c *Color) Update(o Color) {
+	c.X = o.X
+	c.Y = o.Y
+	c.Z = o.Z
 }
 
 func MakeVec3(x float64, y float64, z float64) Vec3 {

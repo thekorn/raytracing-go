@@ -18,9 +18,12 @@ func main() {
 
 	img := image.MakePPMImageFile("./tmp/go.ppm", image_width, image_height)
 
-	world := entities.HittableList{}
-	world.Add(entities.MakeSphere(vec3.MakePoint3(0, -100.5, -1), 100))
-	world.Add(entities.MakeSphere(vec3.MakePoint3(0, 0, -1), 0.5))
+	var world entities.HittableList
+	world.Add(entities.MakeSphere(vec3.MakePoint3(0, -100.5, -1), 100, entities.MakeLambertian(vec3.MakeColor(0.8, 0.8, 0.0))))
+	world.Add(entities.MakeSphere(vec3.MakePoint3(0, 0, -1), 0.5, entities.MakeLambertian(vec3.MakeColor(0.7, 0.3, 0.3))))
+
+	world.Add(entities.MakeSphere(vec3.MakePoint3(1, 0, -1), 0.5, entities.MakeMetal(vec3.MakeColor(0.8, 0.6, 0.2), 0.3)))
+	world.Add(entities.MakeSphere(vec3.MakePoint3(-1, 0, -1), 0.5, entities.MakeMetal(vec3.MakeColor(0.8, 0.8, 0.8), 1)))
 
 	cam := entities.MakeDefaultCamera()
 

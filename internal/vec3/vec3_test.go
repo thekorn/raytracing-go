@@ -126,13 +126,14 @@ func TestGetCrossProductTwoVectors(t *testing.T) {
 	b := MakeVec3(4, 8, 12)
 
 	v := a.Cross(b)
-	if !v.Equals(Vec3{}) {
+	var o Vec3
+	if !v.Equals(o) {
 		t.Errorf("failed getting cross product of two vectors, got %v", v)
 	}
 }
 
 func TestCreateBlackColor(t *testing.T) {
-	black := Color{}
+	var black Color
 	if black.X != 0 || black.Y != 0 || black.Z != 0 {
 		t.Errorf("failed creating black")
 	}

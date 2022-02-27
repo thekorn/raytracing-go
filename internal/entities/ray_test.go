@@ -7,8 +7,9 @@ import (
 )
 
 func TestCreateDefaultRay(t *testing.T) {
-	r := Ray{}
-	if !r.Origin.Equals(vec3.Vec3{}) || !r.Direction.Equals(vec3.Vec3{}) {
+	var r Ray
+	var v vec3.Vec3
+	if !r.Origin.Equals(v) || !r.Direction.Equals(v) {
 		t.Errorf("failed creating a default ray, got %s", r)
 	}
 }

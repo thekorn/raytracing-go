@@ -9,6 +9,7 @@ type HitRecord struct {
 	Normal     vec3.Vec3
 	T          float64
 	Front_face bool
+	Material   Material
 }
 
 func (h *HitRecord) Set_face_normal(r Ray, outward_normal vec3.Vec3) {
@@ -25,6 +26,7 @@ func (h *HitRecord) Update(n HitRecord) {
 	h.Normal = n.Normal
 	h.T = n.T
 	h.Front_face = n.Front_face
+	h.Material = n.Material
 }
 
 type Hittable interface {
@@ -44,7 +46,7 @@ func (hl *HittableList) Add(object Hittable) {
 }
 
 func (hl HittableList) Hit(r Ray, t_min float64, t_max float64, rec *HitRecord) bool {
-	temp_rec := HitRecord{}
+	var temp_rec HitRecord
 	hit_anything := false
 	closest_so_far := t_max
 
@@ -59,11 +61,12 @@ func (hl HittableList) Hit(r Ray, t_min float64, t_max float64, rec *HitRecord) 
 }
 
 func MakeHittableList() HittableList {
-	return HittableList{}
+	var h HittableList
+	return h
 }
 
 func MakeHittableListWithObject(object Hittable) HittableList {
-	h := HittableList{}
+	h := MakeHittableList()
 	h.Add(object)
 	return h
 }

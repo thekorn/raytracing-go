@@ -7,12 +7,13 @@ import (
 )
 
 type Sphere struct {
-	Center vec3.Point3
-	Radius float64
+	Center   vec3.Point3
+	Radius   float64
+	Material Material
 }
 
-func MakeSphere(center vec3.Point3, radius float64) Sphere {
-	return Sphere{center, radius}
+func MakeSphere(center vec3.Point3, radius float64, material Material) Sphere {
+	return Sphere{center, radius, material}
 }
 
 func (s Sphere) Hit(r Ray, t_min float64, t_max float64, rec *HitRecord) bool {
@@ -32,6 +33,7 @@ func (s Sphere) Hit(r Ray, t_min float64, t_max float64, rec *HitRecord) bool {
 			rec.P = vec3.MakePoint3(x.X, x.Y, x.Z)
 			outward_normal := rec.P.Sub(s.Center.Vec3).Div(s.Radius)
 			rec.Set_face_normal(r, outward_normal)
+			rec.Material = s.Material
 			return true
 		}
 		temp = (-1*half_b + root) / a
@@ -41,6 +43,7 @@ func (s Sphere) Hit(r Ray, t_min float64, t_max float64, rec *HitRecord) bool {
 			rec.P = vec3.MakePoint3(x.X, x.Y, x.Z)
 			outward_normal := rec.P.Sub(s.Center.Vec3).Div(s.Radius)
 			rec.Set_face_normal(r, outward_normal)
+			rec.Material = s.Material
 			return true
 		}
 	}
