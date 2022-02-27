@@ -7,6 +7,7 @@ import (
 	"math"
 	"strings"
 
+	"github.com/thekorn/raytracing-go/internal/utils"
 	"github.com/thekorn/raytracing-go/internal/vec3"
 )
 
@@ -46,6 +47,18 @@ func (i PPMImageFile) WriteColor(c vec3.Color) {
 		int(math.Floor(normColor.Y)),
 		int(math.Floor(normColor.Z)),
 	)
+}
+
+func (i PPMImageFile) WriteColorSamplePerPixel(c vec3.Vec3, samples_per_pixel int) {
+	scale := 1 / float64(samples_per_pixel)
+
+	norm := c.ScalarProd(scale)
+	norm_color := vec3.MakeColor(
+		utils.Clamp(norm.X, 0, 1),
+		utils.Clamp(norm.Y, 0, 1),
+		utils.Clamp(norm.Z, 0, 1),
+	)
+	i.WriteColor(norm_color)
 }
 
 func MakePPMImageFile(filepath string, width int, height int) PPMImageFile {

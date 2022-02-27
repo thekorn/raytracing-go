@@ -4,6 +4,7 @@ import (
 	"github.com/schollz/progressbar/v3"
 	"github.com/thekorn/raytracing-go/internal/entities"
 	"github.com/thekorn/raytracing-go/internal/image"
+	"github.com/thekorn/raytracing-go/internal/utils"
 	"github.com/thekorn/raytracing-go/internal/vec3"
 )
 
@@ -12,35 +13,35 @@ func main() {
 	const aspect_ratio = float64(16) / 9
 	const image_width = 384
 	const image_height = int(image_width / aspect_ratio)
+	const samples_per_pixel = 100
 
 	img := image.MakePPMImageFile("./tmp/go.ppm", image_width, image_height)
-
-	origin := vec3.MakePoint3(0, 0, 0)
-	horizontal := vec3.MakeVec3(4, 0, 0)
-	vertical := vec3.MakeVec3(0, 2.25, 0)
-	lower_left_corner := vec3.MakePoint3(-2, -1, -1)
 
 	world := entities.HittableList{}
 	world.Add(entities.MakeSphere(vec3.MakePoint3(0, -100.5, -1), 100))
 	world.Add(entities.MakeSphere(vec3.MakePoint3(0, 0, -1), 0.5))
 
-	bar := progressbar.Default(int64(image_width * image_height))
+	cam := entities.MakeDefaultCamera()
+
+	bar := progressbar.Default(int64(image_width * image_height * samples_per_pixel))
 
 	for y := image_height - 1; y >= 0; y-- {
 		for x := 0; x < image_width; x++ {
-			u := float64(x) / image_width
-			v := float64(y) / float64(image_height)
+			pixel_color := vec3.MakeVec3(0, 0, 0)
 
-			direction := lower_left_corner.Add(
-				horizontal.ScalarProd(u)).
-				Add(vertical.ScalarProd(v))
+			for s := 0; s < samples_per_pixel; s++ {
+				u := (float64(x) + utils.GetDefaultRandomNumber()) / image_width
+				v := (float64(y) + utils.GetDefaultRandomNumber()) / float64(image_height)
 
-			r := entities.MakeRay(origin, direction)
-			color := r.Color(world)
+				r := cam.GetRay(u, v)
+				a := r.Color(world).Vec3
+				pixel_color = pixel_color.Add(a)
 
-			img.WriteColor(color)
-			bar.Add(1)
+			}
+			img.WriteColorSamplePerPixel(pixel_color, samples_per_pixel)
 		}
+		bar.Add(image_width * samples_per_pixel)
 	}
 	img.Close()
+
 }
