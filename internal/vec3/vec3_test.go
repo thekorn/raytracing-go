@@ -97,3 +97,30 @@ func TestGetLengthOfVector(t *testing.T) {
 		t.Errorf("failed getting length of Vector, got %v", a.Length())
 	}
 }
+
+func TestGetUnitVector(t *testing.T) {
+	v := MakeVec3(2, 0, 0)
+	if !v.UnitVec().Equals(Vec3{1, 0, 0}) {
+		t.Errorf("failed getting the UnitVector")
+	}
+}
+
+func TestGetDotProductTwoVectors(t *testing.T) {
+	a := MakeVec3(1, 2, 3)
+	b := MakeVec3(4, 8, 12)
+
+	v := a.Dot(b)
+	if v != 56 {
+		t.Errorf("failed getting dot product of two vectors, got %f", v)
+	}
+}
+
+func TestGetCrossProductTwoVectors(t *testing.T) {
+	a := MakeVec3(1, 2, 3)
+	b := MakeVec3(4, 8, 12)
+
+	v := a.Cross(b)
+	if !v.Equals(Vec3{}) {
+		t.Errorf("failed getting cross product of two vectors, got %v", v)
+	}
+}
