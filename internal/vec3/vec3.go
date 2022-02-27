@@ -1,12 +1,18 @@
 package vec3
 
-import "math"
+import (
+	"fmt"
+	"math"
+)
 
 type Vec3 struct {
 	x float64
 	y float64
 	z float64
 }
+
+type Point3 Vec3
+type Color Vec3
 
 func (v Vec3) ScalarProd(a float64) Vec3 {
 	return MakeVec3(a*v.x, a*v.y, a*v.z)
@@ -40,5 +46,14 @@ func MakeColor(x float64, y float64, z float64) Vec3 {
 	return Vec3{x, y, z}
 }
 
-type Point3 Vec3
-type Color Vec3
+func (v Vec3) String() string {
+	return fmt.Sprintf("Vec3(%.2f, %.2f, %.2f)", v.x, v.y, v.z)
+}
+
+func (v Color) String() string {
+	return fmt.Sprintf("Color(%.2f, %.2f, %.2f)", v.x, v.y, v.z)
+}
+
+func (v Point3) String() string {
+	return fmt.Sprintf("Point3(%.2f, %.2f, %.2f)", v.x, v.y, v.z)
+}

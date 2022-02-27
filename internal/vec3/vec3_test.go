@@ -22,7 +22,7 @@ func TestCreateNewVector(t *testing.T) {
 func TestCreateNewColor(t *testing.T) {
 	v := Color{1, 2, 3}
 	if v.x != 1 || v.y != 2 || v.z != 3 {
-		t.Errorf("failed creating a Color, got %v", v)
+		t.Errorf("failed creating a Color, got %s", v)
 	}
 }
 
@@ -77,7 +77,7 @@ func TestSubstractTwoVectors(t *testing.T) {
 
 	v := a.Sub(b)
 	if v.x != -3 || v.y != -6 || v.z != -9 {
-		t.Errorf("failed substracting two vectors, got %v", v)
+		t.Errorf("failed substracting two vectors, got %s", v)
 	}
 }
 
