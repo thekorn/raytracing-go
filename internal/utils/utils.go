@@ -28,3 +28,7 @@ func Schlick(cosine float64, refIdx float64) float64 {
 	r0Squared := r0 * r0
 	return r0Squared + (1-r0Squared)*math.Pow(1-cosine, 5)
 }
+
+func DegreesToRadians(degrees float64) float64 {
+	return degrees * math.Pi / 180.0
+}
