@@ -52,11 +52,15 @@ func (i PPMImageFile) WriteColor(c vec3.Color) {
 func (i PPMImageFile) WriteColorSamplePerPixel(c vec3.Vec3, samples_per_pixel int) {
 	scale := 1 / float64(samples_per_pixel)
 
-	norm := c.ScalarProd(scale)
+	// Divide the color by the number of samples and gamma-correct for gamma=2.0.
+	r := math.Sqrt(scale * c.X)
+	g := math.Sqrt(scale * c.Y)
+	b := math.Sqrt(scale * c.Z)
+
 	norm_color := vec3.MakeColor(
-		utils.Clamp(norm.X, 0, 1),
-		utils.Clamp(norm.Y, 0, 1),
-		utils.Clamp(norm.Z, 0, 1),
+		utils.Clamp(r, 0, 1),
+		utils.Clamp(g, 0, 1),
+		utils.Clamp(b, 0, 1),
 	)
 	i.WriteColor(norm_color)
 }

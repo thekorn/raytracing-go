@@ -3,6 +3,8 @@ package vec3
 import (
 	"fmt"
 	"math"
+
+	"github.com/thekorn/raytracing-go/internal/utils"
 )
 
 type Vec3 struct {
@@ -63,8 +65,47 @@ func (v Vec3) Equals(o Vec3) bool {
 	return v.X == o.X && v.Y == o.Y && v.Z == o.Z
 }
 
+func (v Vec3) RandomInHemisphere() Vec3 {
+	in_unit_sphere := MakeRandomUnitVec3()
+	if in_unit_sphere.Dot(v) > 0.0 {
+		return in_unit_sphere
+	} else {
+		return in_unit_sphere.ScalarProd(-1)
+	}
+}
+
 func MakeVec3(x float64, y float64, z float64) Vec3 {
 	return Vec3{x, y, z}
+}
+
+func MakeRandomVec3() Vec3 {
+	return MakeVec3(
+		utils.GetDefaultRandomNumber(),
+		utils.GetDefaultRandomNumber(),
+		utils.GetDefaultRandomNumber(),
+	)
+}
+
+func MakeRandomVec3MinMax(min float64, max float64) Vec3 {
+	return MakeVec3(
+		utils.RandomNumber(min, max),
+		utils.RandomNumber(min, max),
+		utils.RandomNumber(min, max),
+	)
+}
+
+func MakeRandomVec3InUnitSphere() Vec3 {
+	for {
+		p := MakeRandomVec3MinMax(-1, 1)
+		if p.Length_squared() >= 1 {
+			continue
+		}
+		return p
+	}
+}
+
+func MakeRandomUnitVec3() Vec3 {
+	return MakeRandomVec3InUnitSphere().UnitVec()
 }
 
 func MakePoint3(x float64, y float64, z float64) Point3 {

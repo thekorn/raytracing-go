@@ -14,6 +14,7 @@ func main() {
 	const image_width = 384
 	const image_height = int(image_width / aspect_ratio)
 	const samples_per_pixel = 100
+	const max_depth = 50
 
 	img := image.MakePPMImageFile("./tmp/go.ppm", image_width, image_height)
 
@@ -34,7 +35,7 @@ func main() {
 				v := (float64(y) + utils.GetDefaultRandomNumber()) / float64(image_height)
 
 				r := cam.GetRay(u, v)
-				a := r.Color(world).Vec3
+				a := r.Color(world, max_depth).Vec3
 				pixel_color = pixel_color.Add(a)
 
 			}
