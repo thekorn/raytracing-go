@@ -17,12 +17,11 @@ func main() {
 	origin := vec3.MakePoint3(0, 0, 0)
 	horizontal := vec3.MakeVec3(4, 0, 0)
 	vertical := vec3.MakeVec3(0, 2.25, 0)
-	lower_left_corner := origin.
-		Sub(horizontal.Div(2)).
-		Sub(vertical.Div(2)).
-		Sub(vec3.MakeVec3(0, 0, 1))
+	lower_left_corner := vec3.MakePoint3(-2, -1, -1)
 
-	red_Sphere := entities.MakeSphere(vec3.MakePoint3(0, 0, -1), 0.5)
+	world := entities.HittableList{}
+	world.Add(entities.MakeSphere(vec3.MakePoint3(0, -100.5, -1), 100))
+	world.Add(entities.MakeSphere(vec3.MakePoint3(0, 0, -1), 0.5))
 
 	for y := image_height - 1; y >= 0; y-- {
 		for x := 0; x < image_width; x++ {
@@ -34,7 +33,7 @@ func main() {
 				Add(vertical.ScalarProd(v))
 
 			r := entities.MakeRay(origin, direction)
-			color := r.Color(red_Sphere)
+			color := r.Color(world)
 
 			img.WriteColor(color)
 

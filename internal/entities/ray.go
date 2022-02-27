@@ -2,6 +2,7 @@ package entities
 
 import (
 	"fmt"
+	"math"
 
 	"github.com/thekorn/raytracing-go/internal/vec3"
 )
@@ -23,20 +24,14 @@ func (r Ray) At(t float64) vec3.Vec3 {
 	return r.Origin.Add(r.Direction.ScalarProd(t))
 }
 
-func (r Ray) Color(red_sphere Sphere) vec3.Color {
-
-	t := red_sphere.Hit(r)
-	if t > 0 {
-		N := r.At(t).
-			Sub(vec3.MakeVec3(0, 0, -1)).
-			UnitVec().
-			Add(vec3.MakeVec3(1, 1, 1)).
-			ScalarProd(0.5)
+func (r Ray) Color(world HittableList) vec3.Color {
+	rec := HitRecord{}
+	if world.Hit(r, 0, math.Inf(1), &rec) {
+		N := rec.Normal.Add(vec3.MakeVec3(1, 1, 1)).ScalarProd(0.5)
 		return vec3.MakeColor(N.X, N.Y, N.Z)
 	}
-
 	unitDirection := r.Direction.UnitVec()
-	t = 0.5 * (unitDirection.Y + 1)
+	t := 0.5 * (unitDirection.Y + 1)
 	s := vec3.MakeVec3(1, 1, 1).
 		ScalarProd(1 - t).
 		Add(vec3.MakeVec3(0.5, 0.7, 1).ScalarProd(t))
