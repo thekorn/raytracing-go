@@ -8,3 +8,7 @@ https://raytracing.github.io/books/RayTracingInOneWeekend.html
 ```
 $ make run
 ```
+
+## Final rendering
+
+![final rendering](./final_result.jpg)

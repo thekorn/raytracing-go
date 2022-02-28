@@ -20,6 +20,9 @@ run: build outdir
 
 open: run
 	open ${OUT_DIR}/go.ppm
+
+final: run
+	convert ${OUT_DIR}/go.ppm final_result.jpg
  
 clean:
 	go clean
