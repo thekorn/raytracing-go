@@ -1,12 +1,31 @@
 package main
 
 import (
+	"math"
+	"sync"
+
 	"github.com/schollz/progressbar/v3"
 	"github.com/thekorn/raytracing-go/internal/entities"
 	"github.com/thekorn/raytracing-go/internal/image"
-	"github.com/thekorn/raytracing-go/internal/utils"
 	"github.com/thekorn/raytracing-go/internal/vec3"
 )
+
+type Pos struct {
+	X int
+	Y int
+}
+
+func GetXY(n int, image_width int, image_height int) Pos {
+	y := int(float64(n) / float64(image_width))
+	x := n - image_width*y
+	return Pos{image_width - (image_width - x - 1), image_height - y - 1}
+}
+
+func GetChunkSize(numChunks int, image_width int, image_height int) int {
+	s := image_width * image_height
+	n := math.Floor(float64(s) / float64(numChunks))
+	return int(n) + 1
+}
 
 func main() {
 
@@ -16,7 +35,10 @@ func main() {
 	const samples_per_pixel = 100
 	const max_depth = 50
 
-	img := image.MakePPMImageFile("./tmp/go.ppm", image_width, image_height)
+	const numWorker = 1000
+	chunkSize := GetChunkSize(numWorker, image_height, image_width)
+
+	img := image.MakePPMImageFile(numWorker, "./tmp/go.ppm", image_width, image_height)
 
 	world := entities.MakeRandomScene()
 
@@ -35,23 +57,45 @@ func main() {
 
 	bar := progressbar.Default(int64(image_width * image_height * samples_per_pixel))
 
-	for y := image_height - 1; y >= 0; y-- {
-		for x := 0; x < image_width; x++ {
-			pixel_color := vec3.MakeVec3(0, 0, 0)
+	var wg sync.WaitGroup
 
-			for s := 0; s < samples_per_pixel; s++ {
-				u := (float64(x) + utils.GetDefaultRandomNumber()) / image_width
-				v := (float64(y) + utils.GetDefaultRandomNumber()) / float64(image_height)
-
-				r := cam.GetRay(u, v)
-				a := r.Color(world, max_depth).Vec3
-				pixel_color = pixel_color.Add(a)
-
-			}
-			img.WriteColorSamplePerPixel(pixel_color, samples_per_pixel)
-		}
-		bar.Add(image_width * samples_per_pixel)
+	for i := 0; i < numWorker; i++ {
+		wg.Add(1)
+		go func(pos int) {
+			defer wg.Done()
+			image.RenderSegment(
+				pos,
+				chunkSize,
+				&img,
+				bar,
+				world,
+				cam,
+				image_width,
+				image_height,
+				samples_per_pixel,
+				max_depth,
+			)
+		}(i)
 	}
+	wg.Wait()
+	//for i := 0; i < image_width*image_height; i++ {
+	//	p := GetXY(i, image_width, image_height)
+	//	pixel_color := vec3.MakeVec3(0, 0, 0)
+	//
+	//	for s := 0; s < samples_per_pixel; s++ {
+	//		u := (float64(p.X) + utils.GetDefaultRandomNumber()) / image_width
+	//		v := (float64(p.Y) + utils.GetDefaultRandomNumber()) / float64(image_height)
+	//
+	//		r := cam.GetRay(u, v)
+	//		a := r.Color(world, max_depth).Vec3
+	//		pixel_color = pixel_color.Add(a)
+	//
+	//	}
+	//	img.WriteColorSamplePerPixel(pixel_color, samples_per_pixel)
+	//	if i%image_width == 0 {
+	//		bar.Add(image_width * samples_per_pixel)
+	//	}
+	//}
 	img.Close()
 
 }
