@@ -18,47 +18,11 @@ func main() {
 
 	img := image.MakePPMImageFile("./tmp/go.ppm", image_width, image_height)
 
-	var world entities.HittableList
-	world.Add(
-		entities.MakeSphere(
-			vec3.MakePoint3(0, -100.5, -1),
-			100,
-			entities.MakeLambertian(vec3.MakeColor(0.8, 0.8, 0.0)),
-		),
-	)
-	world.Add(
-		entities.MakeSphere(
-			vec3.MakePoint3(0, 0, -1),
-			0.5,
-			entities.MakeLambertian(vec3.MakeColor(0.1, 0.2, 0.5)),
-		),
-	)
+	world := entities.MakeRandomScene()
 
-	world.Add(
-		entities.MakeSphere(
-			vec3.MakePoint3(1, 0, -1),
-			0.5,
-			entities.MakeMetal(vec3.MakeColor(0.8, 0.6, 0.2), 0.3),
-		),
-	)
-	world.Add(
-		entities.MakeSphere(
-			vec3.MakePoint3(-1, 0, -1),
-			0.5,
-			entities.MakeDielectric(1.5),
-		),
-	)
-	world.Add(
-		entities.MakeSphere(
-			vec3.MakePoint3(-1, 0, -1),
-			-0.45,
-			entities.MakeDielectric(1.5),
-		),
-	)
-
-	lookfrom := vec3.MakePoint3(3, 3, 2)
-	lookat := vec3.MakePoint3(0, 0, -1)
-	dist_to_focus := lookfrom.Sub(lookat.Vec3).Length()
+	lookfrom := vec3.MakePoint3(13, 2, 3)
+	lookat := vec3.MakePoint3(0, 0, 0)
+	dist_to_focus := 10.0
 
 	cam := entities.MakePosCamera(
 		lookfrom,
@@ -66,7 +30,7 @@ func main() {
 		vec3.MakeVec3(0, 1, 0),
 		20.0,
 		aspect_ratio,
-		2.0, dist_to_focus,
+		0.1, dist_to_focus,
 	)
 
 	bar := progressbar.Default(int64(image_width * image_height * samples_per_pixel))
