@@ -30,8 +30,8 @@ func GetChunkSize(numChunks int, image_width int, image_height int) int {
 func main() {
 
 	const aspect_ratio = float64(16) / 9
-	const image_width = 384
-	const image_height = int(image_width / aspect_ratio)
+	const image_width = 1000
+	image_height := int(math.Floor(image_width / aspect_ratio))
 	const samples_per_pixel = 100
 	const max_depth = 50
 
