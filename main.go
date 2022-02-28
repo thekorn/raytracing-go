@@ -56,12 +56,17 @@ func main() {
 		),
 	)
 
+	lookfrom := vec3.MakePoint3(3, 3, 2)
+	lookat := vec3.MakePoint3(0, 0, -1)
+	dist_to_focus := lookfrom.Sub(lookat.Vec3).Length()
+
 	cam := entities.MakePosCamera(
-		vec3.MakePoint3(-2, 2, 1),
-		vec3.MakePoint3(0, 0, -1),
+		lookfrom,
+		lookat,
 		vec3.MakeVec3(0, 1, 0),
 		20.0,
 		aspect_ratio,
+		2.0, dist_to_focus,
 	)
 
 	bar := progressbar.Default(int64(image_width * image_height * samples_per_pixel))

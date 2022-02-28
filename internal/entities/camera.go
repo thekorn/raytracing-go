@@ -12,40 +12,17 @@ type Camera struct {
 	Lower_left_corner vec3.Point3
 	Horizontal        vec3.Vec3
 	Vertical          vec3.Vec3
+	U                 vec3.Vec3
+	V                 vec3.Vec3
+	W                 vec3.Vec3
+	Lens_radius       float64
 }
 
-func MakeCamera(origin vec3.Point3, lower_left_corner vec3.Point3, horizontal vec3.Vec3, vertical vec3.Vec3) Camera {
-	return Camera{origin, lower_left_corner, horizontal, vertical}
+func MakeCamera(origin vec3.Point3, lower_left_corner vec3.Point3, horizontal vec3.Vec3, vertical vec3.Vec3, u vec3.Vec3, v vec3.Vec3, w vec3.Vec3, lens_radius float64) Camera {
+	return Camera{origin, lower_left_corner, horizontal, vertical, u, v, w, lens_radius}
 }
 
-func MakeDimCamera(viewport_height float64, viewport_width float64) Camera {
-
-	const focal_length = 1.0
-
-	origin := vec3.MakePoint3(0, 0, 0)
-	horizontal := vec3.MakeVec3(viewport_width, 0.0, 0.0)
-	vertical := vec3.MakeVec3(0.0, viewport_height, 0.0)
-	l := origin.Sub(horizontal.Div(2)).Sub(vertical.Div(2)).Sub(vec3.MakeVec3(0, 0, focal_length))
-	lower_left_corner := vec3.MakePoint3(l.X, l.Y, l.Z)
-
-	return MakeCamera(
-		origin,
-		lower_left_corner,
-		horizontal,
-		vertical,
-	)
-}
-
-func MakeDefaultCamera() Camera {
-
-	const aspect_ratio = 16.0 / 9.0
-	const viewport_height = 2.0
-	const viewport_width = aspect_ratio * viewport_height
-
-	return MakeDimCamera(viewport_height, viewport_width)
-}
-
-func MakePosCamera(lookfrom vec3.Point3, lookat vec3.Point3, vup vec3.Vec3, vfov float64, aspect_ratio float64) Camera {
+func MakePosCamera(lookfrom vec3.Point3, lookat vec3.Point3, vup vec3.Vec3, vfov float64, aspect_ratio float64, aperture float64, focus_dist float64) Camera {
 	theta := utils.DegreesToRadians(vfov)
 	h := math.Tan(theta / 2)
 	viewport_height := 2.0 * h
@@ -56,9 +33,9 @@ func MakePosCamera(lookfrom vec3.Point3, lookat vec3.Point3, vup vec3.Vec3, vfov
 	v := w.Cross(u)
 
 	origin := lookfrom
-	horizontal := u.ScalarProd(viewport_width)
-	vertical := v.ScalarProd(viewport_height)
-	l := origin.Sub(horizontal.Div(2)).Sub(vertical.Div(2)).Sub(w)
+	horizontal := u.ScalarProd(viewport_width).ScalarProd(focus_dist)
+	vertical := v.ScalarProd(viewport_height).ScalarProd(focus_dist)
+	l := origin.Sub(horizontal.Div(2)).Sub(vertical.Div(2)).Sub(w.ScalarProd(focus_dist))
 	lower_left_corner := vec3.MakePoint3(l.X, l.Y, l.Z)
 
 	return MakeCamera(
@@ -66,12 +43,19 @@ func MakePosCamera(lookfrom vec3.Point3, lookat vec3.Point3, vup vec3.Vec3, vfov
 		lower_left_corner,
 		horizontal,
 		vertical,
+		u, v, w,
+		aperture/2.0,
 	)
 }
 
 func (c Camera) GetRay(u float64, v float64) Ray {
+	rd := vec3.MakeRandomVec3InUnitDisk().ScalarProd(c.Lens_radius)
+	offset := c.U.ScalarProd(rd.X).Add(c.V.ScalarProd(rd.Y))
+
+	o := c.Origin.Add(offset)
+	origin := vec3.MakePoint3(o.X, o.Y, o.Z)
 	return MakeRay(
-		c.Origin,
-		c.Lower_left_corner.Add(c.Horizontal.ScalarProd(u)).Add(c.Vertical.ScalarProd(v)).Sub(c.Origin.Vec3),
+		origin,
+		c.Lower_left_corner.Add(c.Horizontal.ScalarProd(u)).Add(c.Vertical.ScalarProd(v)).Sub(c.Origin.Vec3).Sub(offset),
 	)
 }

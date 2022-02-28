@@ -125,9 +125,27 @@ func MakeRandomVec3MinMax(min float64, max float64) Vec3 {
 	)
 }
 
+func MakeRandomDiskMinMax(min float64, max float64) Vec3 {
+	return MakeVec3(
+		utils.RandomNumber(min, max),
+		utils.RandomNumber(min, max),
+		0,
+	)
+}
+
 func MakeRandomVec3InUnitSphere() Vec3 {
 	for {
 		p := MakeRandomVec3MinMax(-1, 1)
+		if p.Length_squared() >= 1 {
+			continue
+		}
+		return p
+	}
+}
+
+func MakeRandomVec3InUnitDisk() Vec3 {
+	for {
+		p := MakeRandomDiskMinMax(-1, 1)
 		if p.Length_squared() >= 1 {
 			continue
 		}
