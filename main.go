@@ -78,24 +78,6 @@ func main() {
 		}(i)
 	}
 	wg.Wait()
-	//for i := 0; i < image_width*image_height; i++ {
-	//	p := GetXY(i, image_width, image_height)
-	//	pixel_color := vec3.MakeVec3(0, 0, 0)
-	//
-	//	for s := 0; s < samples_per_pixel; s++ {
-	//		u := (float64(p.X) + utils.GetDefaultRandomNumber()) / image_width
-	//		v := (float64(p.Y) + utils.GetDefaultRandomNumber()) / float64(image_height)
-	//
-	//		r := cam.GetRay(u, v)
-	//		a := r.Color(world, max_depth).Vec3
-	//		pixel_color = pixel_color.Add(a)
-	//
-	//	}
-	//	img.WriteColorSamplePerPixel(pixel_color, samples_per_pixel)
-	//	if i%image_width == 0 {
-	//		bar.Add(image_width * samples_per_pixel)
-	//	}
-	//}
 	img.Close()
 
 }
