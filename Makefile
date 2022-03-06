@@ -7,7 +7,10 @@ outdir:
 	mkdir -p ${OUT_DIR}
 
 build:
-	go build -o ${BINARY_NAME} main.go
+	go build -o ${BINARY_NAME}
+
+build-profile:
+	go build -tags pprof -o ${BINARY_NAME}
  
 test:
 	go test -coverprofile cover.out -v ./...
@@ -17,6 +20,12 @@ cover: test
  
 run: build outdir
 	./${BINARY_NAME}
+ 
+run-profile: build-profile outdir
+	./${BINARY_NAME}
+
+profile: run-profile
+	go tool pprof -http=":8000" ./${BINARY_NAME} ./${OUT_DIR}/cpu.pprof
 
 open: run
 	open ${OUT_DIR}/go.ppm
